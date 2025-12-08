@@ -1,0 +1,155 @@
+import type { BuildCommand, EnvironmentVariables, HeaderRule } from './types'; // Assume custom types are defined in a separate file
+
+interface RedirectRule {
+  source: string;
+  destination: string;
+  statusCode?: number;
+}
+
+interface CacheStrategy {
+  urlPattern: string;
+  headers?: Array<{ key: string; value: string }>;
+  immutable?: boolean;
+  maxAgeSeconds?: number;
+}
+
+interface FrameworkSettings {
+  vercel?: { buildCommand: BuildCommand };
+  netlify?: { buildCommand: BuildCommand };
+}
+
+interface DeployConfig {
+  build: BuildCommand;
+  env: EnvironmentVariables;
+  headers: Array<HeaderRule>;
+  redirects: Array<RedirectRule>;
+  cacheStrategies: Array<CacheStrategy>;
+  frameworkSettings: FrameworkSettings;
+}
+
+export const deployConfig: DeployConfig = {
+  build: {
+    command: 'next build',
+    output: '.next'
+  },
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    DATABASE_URL: process.env.DATABASE_URL
+  },
+  headers: [
+    {
+      source: '/(.*)',
+      headers: [
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'X-XSS-Protection', value: '1; mode=block' }
+      ]
+    }
+  ],
+  redirects: [
+    {
+      source: '/',
+      destination: '/dashboard',
+      statusCode: 302
+    }
+  ],
+  cacheStrategies: [
+    {
+      urlPattern: '/api/(.*)',
+      headers: [
+        { key: 'Cache-Control', value: 's-maxage=1, stale-while-revalidate' },
+        { key: 'Vary', value: '*' }
+      ]
+    },
+    {
+      urlPattern: '/static/(.*)',
+      immutable: true,
+      maxAgeSeconds: 31536000
+    }
+  ],
+  frameworkSettings: {
+    vercel: {
+      buildCommand: 'next build'
+    },
+    netlify: {
+      buildCommand: 'next build && next export'
+    }
+  }
+};
+
+import type { BuildCommand, EnvironmentVariables, HeaderRule } from './types'; // Assume custom types are defined in a separate file
+
+interface RedirectRule {
+  source: string;
+  destination: string;
+  statusCode?: number;
+}
+
+interface CacheStrategy {
+  urlPattern: string;
+  headers?: Array<{ key: string; value: string }>;
+  immutable?: boolean;
+  maxAgeSeconds?: number;
+}
+
+interface FrameworkSettings {
+  vercel?: { buildCommand: BuildCommand };
+  netlify?: { buildCommand: BuildCommand };
+}
+
+interface DeployConfig {
+  build: BuildCommand;
+  env: EnvironmentVariables;
+  headers: Array<HeaderRule>;
+  redirects: Array<RedirectRule>;
+  cacheStrategies: Array<CacheStrategy>;
+  frameworkSettings: FrameworkSettings;
+}
+
+export const deployConfig: DeployConfig = {
+  build: {
+    command: 'next build',
+    output: '.next'
+  },
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    DATABASE_URL: process.env.DATABASE_URL
+  },
+  headers: [
+    {
+      source: '/(.*)',
+      headers: [
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'X-XSS-Protection', value: '1; mode=block' }
+      ]
+    }
+  ],
+  redirects: [
+    {
+      source: '/',
+      destination: '/dashboard',
+      statusCode: 302
+    }
+  ],
+  cacheStrategies: [
+    {
+      urlPattern: '/api/(.*)',
+      headers: [
+        { key: 'Cache-Control', value: 's-maxage=1, stale-while-revalidate' },
+        { key: 'Vary', value: '*' }
+      ]
+    },
+    {
+      urlPattern: '/static/(.*)',
+      immutable: true,
+      maxAgeSeconds: 31536000
+    }
+  ],
+  frameworkSettings: {
+    vercel: {
+      buildCommand: 'next build'
+    },
+    netlify: {
+      buildCommand: 'next build && next export'
+    }
+  }
+};
